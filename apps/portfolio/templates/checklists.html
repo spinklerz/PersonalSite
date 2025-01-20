@@ -1,0 +1,306 @@
+[[extend "layout.html"]]
+<head>
+    <meta charset="UTF-8">
+    <title>Checklist Page</title>
+    <!-- Bootstrap CSS (use a CDN or local version as needed) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <h1 class="mb-4">Enter a Checklist</h1>
+        <div id="message" class="mb-3"></div>
+        <div class="d-flex mb-3">
+            <a id="my-checklists-link" href="/bird_watching/mychecklists" class="btn btn-primary">My Checklists</a>
+            <button id="submit-checklist" class="btn btn-success ml-auto">Submit Checklist</button>
+        </div>
+
+        <div class="form-group">
+            <label for="species-search">Search Species:</label>
+            <input type="text" id="species-search" placeholder="Type to filter..." class="form-control">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="latitude">Latitude:</label>
+                <input type="text" id="latitude" value="37" class="form-control">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="longitude">Longitude:</label>
+                <input type="text" id="longitude" value="-87" class="form-control">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="observation_date">Date:</label>
+                <input type="date" id="observation_date" value="2024-12-05" class="form-control">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="observation_time">Time:</label>
+                <input type="time" id="observation_time" value="10:55" class="form-control">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="duration_minutes">Duration Minutes:</label>
+                <input type="number" id="duration_minutes" value="0" class="form-control">
+            </div>
+        </div>
+
+        <table id="species-table" class="table table-striped table-bordered mt-4">
+            <thead class="thead-light">
+                <tr>
+                    <th>Species</th>
+                    <th>Count</th>
+                    <th>Increment</th>
+                </tr>
+            </thead>
+            <tbody id="species-table-body">
+                <!-- Dynamically filled by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get('event_id');
+
+            const speciesTableBody = document.getElementById('species-table-body');
+            const searchInput = document.getElementById('species-search');
+            const submitBtn = document.getElementById('submit-checklist');
+            const messageDiv = document.getElementById('message');
+
+            let allSpecies = [];
+            let filteredSpecies = [];
+            let originalSightings = {}; // to store sightings as { species_name: count }
+
+            // Fetch species first
+            fetch('/bird_watching/api/get_species')
+            .then(response => response.json())
+            .then(data => {
+                allSpecies = data.species;
+                filteredSpecies = allSpecies;
+                renderSpeciesTable();
+                // If editing an existing checklist, load its data
+                if (eventId) {
+                    loadChecklistDetails(eventId);
+                    loadChecklistSightings(eventId);
+                }
+            })
+            .catch(err => console.error("Error fetching species:", err));
+
+
+            function loadChecklistDetails(event_id) {
+                fetch('/bird_watching/api/get_checklist_details?event_id=' + encodeURIComponent(event_id))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('latitude').value = data.details.latitude;
+                        document.getElementById('longitude').value = data.details.longitude;
+                        document.getElementById('observation_date').value = data.details.observation_date;
+                        document.getElementById('observation_time').value = data.details.observation_time;
+                        document.getElementById('duration_minutes').value = data.details.duration_minutes;
+                    } else {
+                        showMessage('Error loading checklist details: ' + data.message, 'danger');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showMessage('Error loading checklist details.', 'danger');
+                });
+            }
+
+            function loadChecklistSightings(event_id) {
+                fetch('/bird_watching/api/get_checklist_sightings?event_id=' + encodeURIComponent(event_id))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        data.sightings.forEach(s => {
+                            originalSightings[s.species_name] = s.count;
+                        });
+                        // After we have original sightings, populate the table inputs
+                        populateSightings();
+                    } else {
+                        showMessage('Error loading sightings: ' + data.message, 'danger');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showMessage('Error loading sightings.', 'danger');
+                });
+            }
+
+            function populateSightings() {
+                // After table is rendered, set the input values for species found in originalSightings
+                const inputs = speciesTableBody.querySelectorAll('input[type="number"]');
+                inputs.forEach(inp => {
+                    const speciesName = inp.dataset.speciesName;
+                    if (originalSightings[speciesName] !== undefined) {
+                        inp.value = originalSightings[speciesName];
+                    }
+                });
+            }
+
+            // Render species table
+            function renderSpeciesTable() {
+                speciesTableBody.innerHTML = '';
+                filteredSpecies.forEach(species => {
+                    const tr = document.createElement('tr');
+                    const nameTd = document.createElement('td');
+                    nameTd.textContent = species.name;
+
+                    const countTd = document.createElement('td');
+                    const countInput = document.createElement('input');
+                    countInput.type = 'number';
+                    countInput.value = '0';
+                    countInput.dataset.speciesName = species.name;
+                    countInput.classList.add('form-control', 'form-control-sm');
+                    countTd.appendChild(countInput);
+
+                    const incrementTd = document.createElement('td');
+                    const incrementBtn = document.createElement('button');
+                    incrementBtn.textContent = '+';
+                    incrementBtn.type = 'button';
+                    incrementBtn.classList.add('btn', 'btn-info', 'btn-sm');
+                    incrementBtn.addEventListener('click', () => {
+                        countInput.value = parseInt(countInput.value) + 1;
+                    });
+                    incrementTd.appendChild(incrementBtn);
+
+                    tr.appendChild(nameTd);
+                    tr.appendChild(countTd);
+                    tr.appendChild(incrementTd);
+                    speciesTableBody.appendChild(tr);
+                });
+            }
+
+            // Filter functionality
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase();
+                filteredSpecies = allSpecies.filter(s => s.name.toLowerCase().includes(query));
+                renderSpeciesTable();
+                // If we are editing an existing checklist, we need to re-populate sightings after render
+                if (eventId) {
+                    populateSightings();
+                }
+            });
+
+            // Submit checklist or update sightings
+            submitBtn.addEventListener('click', () => {
+                const latitude = document.getElementById('latitude').value;
+                const longitude = document.getElementById('longitude').value;
+                const observation_date = document.getElementById('observation_date').value;
+                const observation_time = document.getElementById('observation_time').value;
+                const duration_minutes = document.getElementById('duration_minutes').value;
+
+                const inputs = speciesTableBody.querySelectorAll('input[type="number"]');
+                const sightings = [];
+                inputs.forEach(inp => {
+                    const count = parseInt(inp.value);
+                    if (count > 0) {
+                        sightings.push({
+                            species_name: inp.dataset.speciesName,
+                            count: count
+                        });
+                    }
+                });
+
+                if (eventId) {
+                    // Editing existing checklist:
+                    // 1) Update checklist main fields
+                    fetch('/bird_watching/api/update_checklist', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            event_id: eventId,
+                            latitude,
+                            longitude,
+                            observation_date,
+                            observation_time,
+                            duration_minutes
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status !== 'success') {
+                            showMessage('Error updating checklist details: ' + (data.message || ''), 'danger');
+                            throw new Error('Failed to update checklist details');
+                        }
+                        // 2) Update sightings
+                        return fetch('/bird_watching/api/update_sightings', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                event_id: eventId,
+                                sightings: sightings
+                            })
+                        });
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showMessage('Checklist updated successfully!', 'success');
+                        } else {
+                            showMessage('Error updating sightings: ' + (data.message || ''), 'danger');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showMessage('An error occurred while updating the checklist.', 'danger');
+                    });
+
+                } else {
+                    // Creating a new checklist:
+                    // 1) Add checklist
+                    fetch('/bird_watching/api/add_checklist', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            latitude,
+                            longitude,
+                            observation_date,
+                            observation_time,
+                            duration_minutes
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status !== 'success') {
+                            showMessage('Error creating checklist: ' + data.message, 'danger');
+                            return;
+                        }
+
+                        const new_event_id = data.event_id;
+                        // 2) Update sightings
+                        return fetch('/bird_watching/api/update_sightings', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                event_id: new_event_id,
+                                sightings: sightings
+                            })
+                        });
+                    })
+                    .then(response => response ? response.json() : null)
+                    .then(data => {
+                        if (!data) return; // no update needed
+                        if (data.status === 'success') {
+                            showMessage('Checklist submitted successfully!', 'success');
+                        } else {
+                            showMessage('Error updating sightings: ' + (data.message || ''), 'danger');
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error:", err);
+                        showMessage('An error occurred. Check console.', 'danger');
+                    });
+                }
+            });
+
+            function showMessage(text, type) {
+                messageDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${text}</div>`;
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS (and dependencies) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

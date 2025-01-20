@@ -1,0 +1,107 @@
+[[extend "layout.html"]]
+<head>
+    <title>Stats Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script
+        src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.prod.js"></script>
+    <!--- Add the following script for Axios import --->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--- Add the following scripts for the Google Map --->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqokN_HaARhGOGKCr8HfQr_peIwS2E-R8"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@googlemaps/markerclusterer@5.0.2/dist/index.min.js"
+        defer></script>
+
+    <!--- Option Bar Styling --->
+</head>
+<body>
+    <!--- Hero Section --->
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <p class="title">Stats Page</p>
+            <p class="subtitle">Visualize Data and Statistics</p>
+        </div>
+    </section>
+
+    <div id="app" class="container">
+
+        <!-- Grid Section for Sightings -->
+        <div class="box" style="padding: 2rem; width: 100%; max-width: 100%;
+            margin-top: 40px;">
+            <h2 class="title is-4">Total Sightings</h2>
+            [[=grid.render()]]
+        </div>
+        <!-- Map Section -->
+        <div class="box">
+            <!-- Drop Down Menu -->
+            <h2 class="title is-4">Map</h2>
+            <!-- Dropdown to select species -->
+            <h2>Select a Species</h2>
+            <select v-model="selectedSpecies" @change="fetchCoordinates">
+                <option value="" disabled>Select a species</option>
+                <option v-for="(species, index) in sortedSpeciesList"
+                    :key="index" :value="species">
+                    {{ species }}
+                </option>
+            </select>
+
+            <!-- Display selected species -->
+            <div v-if="selectedSpecies">
+                <p>This map shows sightings of {{ selectedSpecies }}
+                </p>
+            </div>
+            <!-- Map -->
+            <div id="map" style="width: 100%; height: 400px; margin-top: 40px;"></div>
+        </div>
+
+        <!-- Statistics Table -->
+        <div class="box">
+            <h2 class="title is-4">Statistics</h2>
+            <table class="table is-striped is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total sightings</td>
+                        <td>{{ totalSightings }}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Total Unique Species seen</td>
+                        <td>{{ sortedSpeciesList.length }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Visualizations -->
+        <div class="box">
+            <h2 class="title is-4">Visualizations</h2>
+            <div class="columns">
+                <div class="column">
+                    <h3 class="title is-5">Trend Chart</h3>
+                    <canvas id="trendChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Load Google Maps API -->
+        <script>
+        let my_callback_url = "[[=XML(my_callback_url)]]";
+        let load_checklist_data_url = "[[=XML(load_checklist_data_url)]]";
+        let fetch_coordinates_url = "[[=XML(fetch_coordinates_url)]]";
+        let bird_trends_url = "[[=XML(bird_trends_url)]]";
+      </script>
+        <script src="../static/js/stats.js"></script>
+    </body>
+
+
+    [[end]]

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Network+ Exam Preparation</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
+        <style>
+            
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background-color: black;
+        }
+        /* Reset all text colors to black */
+    body, .content, p, h2, h3, h4, h5, h6, li{
+        color: #000 !important;  /* Force all text elements to black */
+    }
+
+    /* If specific elements are still grey, you can target them directly */
+    .has-text-grey, .has-text-muted {
+        color: #000 !important;
+    }
+
+    /* If it's within a specific section, you can narrow the scope */
+    section, article {
+        color: #000 !important;
+    }
+
+        .hero {
+            background-color: black;
+            color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .content-container {
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 800px;
+            opacity: 0;
+        }
+
+        .content img {
+            max-width: 100%;
+            height: auto;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        .content h2 {
+            margin-top: 2rem;
+            font-size: 1.75rem;
+            color: rgb(51, 153, 255);
+        }
+
+        .back-button {
+            margin-top: 1rem;
+            display: inline-block;
+            color: white;
+            background-color: #3273dc;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            opacity: 0;
+        }
+
+        .back-button:hover {
+            background-color: #275bc1;
+        }
+    </style>
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.9.0/dist/gsap.min.js"></script>
+    </head>
+    <body>
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="../index">David
+                    Shonack</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="container">
+                <h1 class="title">Network+ Exam Preparation Guide</h1>
+                <p class="subtitle">David Shonack</p>
+            </div>
+        </section>
+
+        <div class="content-container">
+            <article class="content">
+                <h1 id="introduction" style="color:rgb(51, 153, 255)">Networking
+                    Concepts Overview</h1>
+                <p>To succeed in the Network+ certification, understanding
+                    networking concepts is crucial. The following are key areas
+                    to focus on:</p>
+
+                <h2>1.0 Networking Concepts</h2>
+                <h3>1.1 OSI Reference Model</h3>
+                <p>The OSI model is a foundational concept in networking. It is
+                    split into seven layers:</p>
+                <ul>
+                    <li>Layer 1 - Physical</li>
+                    <ul><li>The Physical Layer of the OSI represents the bits on
+                            the wire or the medium at which these bits travel
+                            upon</li>
+                        <li>Protocols: IEEE 802.3</li></ul>
+                    <li>Layer 2 - Data Link</li>
+                    <ul><li> The Data link layer represents communication in a
+                            Local Area network and frequently uses MAC addresses
+                            to reference machines</li>
+                        <li>Protocols: Ethernet, Spanning Tree Protocol (STP)
+                        </li></ul>
+                    <li>Layer 3 - Network</li>
+                    <ul><li> The Network link layer represents communication in
+                            that is used in routing mainly to route paket
+                            through the internet. </li>
+                        <li>Protocols: ICMP, IP, ARP
+                        </li></ul>
+                    <li>Layer 4 - Transport</li>
+                    <ul><li> The Transport link layer represents communication
+                            that defines rules for communiation, integrity,
+                            reliability, of data </li>
+                        <li>Protocols: UDP, TCP, SCTP
+                        </li></ul>
+                    <li>Layer 5 - Session</li>
+                    <ul><li> The session layer mainly handles manages
+                            connections and provides authentication </li></ul>
+                    <li>Layer 6 - Presentation</li>
+                    <ul><li> The presentation layer handles, encryption and
+                            decryption</li></ul>
+                    <li>Layer 7 - Application</li>
+                    <ul><li> The Application layer mainly handles web request,
+                            emails things of that nature </li>
+                        <li>Protocols: HTTP/HTTPS, SMTP
+                        </li></ul>
+                </ul>
+                <p>Understanding these layers is essential as each layer has
+                    specific responsibilities and protocols.</p>
+
+                <h3>1.2 Networking Appliances and Functions</h3>
+                <p>Several networking appliances and services play important
+                    roles in networking environments:</p>
+                <ul>
+                    <li>Router, Switch, Firewall, Load Balancer</li>
+                    <ul>
+                        <li>
+                            Router - is a network device that is used to forward
+                            IP traffic to the internet
+                        </li>
+                        <li>
+                            Switch - is a network device that is used to forward
+                            typically layer 2 traffic using ARP and MAC tables,
+                            switches can be layer 3
+                        </li>
+                        <li>
+                            Firewalls - is a network device that controls
+                            ingress and outgress traffic to filter out malicous
+                            traffic vs legitmate traffic
+                        </li>
+                        <li>
+                            Load Balancer - a network device that is used to
+                            maximize device utlization
+                        </li>
+                    </ul>
+                    <li>Intrusion Detection Systems (IDS), Intrusion Prevention
+                        Systems (IPS)</li>
+                    <li>Content Delivery Networks (CDN), VPNs</li>
+                    <li>Virtual Private Cloud (VPC) and Network Security Groups</li>
+                </ul>
+
+                <h3>1.3 Cloud Concepts and Connectivity Options</h3>
+                <p>As networking evolves, cloud technologies become integral.
+                    These are some critical concepts to understand:</p>
+                <ul>
+                    <li>Cloud Deployment Models: Public, Private, Hybrid</li>
+                    <li>Service Models: SaaS, IaaS, PaaS</li>
+                    <li>Connectivity: VPN, Direct Connect</li>
+                    <li>Cloud Gateways: Internet Gateway, NAT Gateway</li>
+                </ul>
+
+                <h3>1.4 Networking Ports and Protocols</h3>
+                <p>Understanding common networking ports and protocols is
+                    essential for configuring and troubleshooting networks:</p>
+                <ul>
+                    <li>FTP (Ports 20/21), HTTP (Port 80), HTTPS (Port 443)</li>
+                    <li>SSH (Port 22), SMTP (Port 25), DNS (Port 53)</li>
+                    <li>Common Traffic Types: Unicast, Multicast, Broadcast</li>
+                </ul>
+
+                <h3>1.5 Transmission Media and Transceivers</h3>
+                <p>Transmission media and the use of transceivers are
+                    fundamental in establishing physical network connections.
+                    Key technologies include:</p>
+                <ul>
+                    <li>Wired Media: Ethernet (802.3), Fiber (Single-mode vs.
+                        Multimode), Coaxial</li>
+                    <li>Wireless: 802.11 (Wi-Fi), Cellular, Satellite</li>
+                    <li>Transceivers: SFP, QSFP, LC, SC connectors</li>
+                </ul>
+
+                <h3>1.6 Network Topologies</h3>
+                <p>Various network topologies affect how devices communicate
+                    within a network:</p>
+                <ul>
+                    <li>Mesh, Star, Hybrid, and Point-to-Point</li>
+                    <li>Three-Tier Hierarchical Model: Core, Distribution,
+                        Access</li>
+                    <li>Traffic Flow Types: North-South, East-West</li>
+                </ul>
+
+                <h3>1.7 IPv4 Network Addressing</h3>
+                <p>Knowledge of IPv4 addressing and subnetting is crucial for
+                    network design:</p>
+                <ul>
+                    <li>Subnetting: VLSM, CIDR</li>
+                    <li>Class A, B, C, D, E Addresses</li>
+                    <li>Private IP Addressing (RFC1918), APIPA</li>
+                </ul>
+
+                <h3>1.8 Evolving Network Environments</h3>
+                <p>As networks evolve, technologies like SDN, SD-WAN, and Zero
+                    Trust Architecture (ZTA) are becoming more important:</p>
+                <ul>
+                    <li>Software-Defined Networking (SDN) and SD-WAN</li>
+                    <li>Zero Trust Architecture (ZTA) and SASE/SSE</li>
+                    <li>IPv6 Addressing and Compatibility</li>
+                </ul>
+
+                <img src="https://via.placeholder.com/800x400" alt="Networking
+                    Image">
+
+                <a href="index.html" class="back-button">Back to Blogs</a>
+            </article>
+        </div>
+
+        <script>
+        window.onload = function () {
+            gsap.fromTo(".hero h1", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 2.5, ease: "power2.out" });
+            gsap.from(".hero .subtitle", { opacity: 0, y: 20, duration: 1, ease: "power2.out", delay: 0.5 });
+            gsap.to(".content-container", { opacity: 1, duration: 1.5, ease: "power2.out", delay: 1 });
+            gsap.to(".back-button", { opacity: 1, y: 0, duration: 1.5, ease: "power2.out", delay: 1.5 });
+            gsap.from(".content ul, .content img", { opacity: 0, y: 20, duration: 1, stagger: 0.3, ease: "power2.out", delay: 1 });
+        };
+    </script>
+    </body>
+</html>
